@@ -1,66 +1,30 @@
-## Foundry
+# ByteTheCookies NFTs
+<picture>
+  <source srcset="./assets/readmeImages/copertina.png" media="(min-width: 680px)">
+    <p align="center">  
+        <img src="./assets/readmeImages/copertina.png" alt="copertina">
+    </p>
+</picture>
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Table of contens
+=============
 
-Foundry consists of:
+- [ByteTheCookies NFTs](#bytethecookies-nfts)
+- [Table of contens](#table-of-contens)
+  - [Project Details](#project-details)
+    - [Project Overview](#project-overview)
+  
+## Project Details
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+This project is an NFT project for the CTF group I am a part of. The goal is to create and trade non-fungible tokens (NFTs) within the group. Made for the meme ◕⩊◕
 
-## Documentation
+### Project Overview
 
-https://book.getfoundry.sh/
+The project aims to create a platform for the ByteTheCookies CTF group to create non-fungible tokens (NFTs). NFTs are unique digital assets that can represent ownership of digital or physical items. With this project, members of the group will be able to mint their own NFTs, showcase them, and (why not) trade them with other members.
 
-## Usage
+The platform will provide features such as:
 
-### Build
+- NFT minting: Members can create their own NFTs by uploading digital assets and defining their properties.
+- NFT showcase: A gallery on [ByteTheCookies](bytethecookies.github.io/) to showcase the NFTs created by the members.
 
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+The project will be developed using technologies such as **Ethereum** blockchain for NFT tokenization and **IPFS** for decentralized storage of assets.
