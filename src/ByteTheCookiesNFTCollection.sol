@@ -10,6 +10,9 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
+    string public s_name;
+    string public s_symbol;
+    address private s_owner;
     uint256 private s_tokenCounter;
     mapping(address => bool) private s_whitelist;
     mapping(address => string) private s_ownershipUris;
@@ -35,7 +38,14 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
-    constructor() ERC721("ByteTheCookiesNFTCollection", "BTC") Ownable(msg.sender){
+    constructor(
+        string memory name,
+        string memory symbol,
+        address owner
+    ) ERC721(name,symbol) Ownable(msg.sender){
+        s_name = name;
+        s_symbol = symbol;
+        s_owner = msg.sender; 
         s_tokenCounter = 1000; // Starting tokenId Counter
         s_whitelist[msg.sender] = true; // Owner is whitelisted by default
     }
@@ -116,6 +126,16 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
     /// @param tokenId The tokenId assosiated with the NFT token
     function _getTokenURI(uint256 tokenId) internal view returns (string memory) {
         return _tokenURIs[tokenId];
-        emit MetadataRetrieved(tokenId);
+    }
+
+    function getAllTokenUriOfAddressForEveryTokenID(address user) public view returns (string memory) {
+        require(s_whitelist[user], ByteTheCookiesNFTCollection__UserIsNotWhitelisted());
+        string memory allTokenUri;
+        for (uint256 i = 1000; i < s_tokenCounter; i++) {
+            if (ownerOf(i) == user) {
+                allTokenUri = string(abi.encodePacked(allTokenUri, _getTokenURI(i)));
+            }
+        }
+        return allTokenUri;
     }
 }
