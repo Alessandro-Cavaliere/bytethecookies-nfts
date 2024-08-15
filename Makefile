@@ -41,8 +41,11 @@ deploy:
 mint:
 	@forge script script/Interactions.s.sol:MintByteTheCookiesNFT ${NETWORK_ARGS}
 
-prova:
-	@forge script ./script/Interactions.s.sol:prova ${NETWORK_ARGS} 
+allTokenUri:
+	@forge script script/Interactions.s.sol:RetrieveTokenUri ${NETWORK_ARGS} 
+
+balance:
+	@forge script script/Interactions.s.sol:BalanceOfOwner ${NETWORK_ARGS} 
 
 zkdeploy: 
 	@forge create src/OurToken.sol:OurToken --rpc-url http://127.0.0.1:8011 --private-key $(DEFAULT_ZKSYNC_LOCAL_KEY) --legacy --zksync
