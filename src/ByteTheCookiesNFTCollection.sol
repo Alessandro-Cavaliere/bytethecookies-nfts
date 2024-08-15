@@ -21,6 +21,7 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
     //////////////////////////////////////////////////////////////*/
     event CreatedNFT(uint256 indexed tokenId);
     event MetadataUpdate(uint256 indexed tokenId);
+    event MetadataRetrieved(uint256 indexed tokenId);
     event ByteTheCookiesNFTCollection__Received(address indexed sender, uint256 value);
 
     /*//////////////////////////////////////////////////////////////
@@ -42,26 +43,27 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
     /*//////////////////////////////////////////////////////////////
                            START OF FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+
+    /// @notice Mint a new NFT
+    /// @dev Mint a new NFT though the minting process and is only available to whitelisted addresses
+    /// @param tokenUri The URI of the token - the json data containing the metadata
      function mintNft(string memory tokenUri) public payable{
         require(s_whitelist[msg.sender], ByteTheCookiesNFTCollection__UserIsNotWhitelisted());
         require(msg.value >= MINT_PRICE, ByteTheCookiesNFTCollection__InvalidPayment());
-        
         uint256 tokenCounter = s_tokenCounter;
         _safeMint(msg.sender, tokenCounter);
         _setTokenURI(tokenCounter, tokenUri);
-        console.log("msg.valie: ", msg.value);
-        console.log(owner());
-        uint256 ownerShare = msg.value / 2; // Calcola il 50% del pagamento
-        console.log("ownerShare: ", ownerShare);
-        (bool success, ) = payable(owner()).call{value: ownerShare}("");
-        require(success, "Transfer to owner failed");
-        (bool success2, ) = payable(address(this)).call{value: ownerShare}("");
-        require(success2, "Transfer to NFT contract failed");
+        uint256 ownerShare = msg.value / 2; 
+        payable(owner()).transfer(ownerShare);
         s_ownershipUris[msg.sender] = tokenUri;
         s_tokenCounter = s_tokenCounter + 1;
         emit CreatedNFT(tokenCounter);
     }
 
+    /// @notice Get the URI of the token
+    /// @dev Get the URI of the token providing the tokenId - The tokenURI can be visualized in the browser with IPFS Companion or with IPFS Desktop
+    /// @param tokenId The tokenId assosiated with the NFT token 
+    /// @return The URI of the token
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(ownerOf(tokenId) != address(0), OZ_ERC721__NoExistentToken());
         require(bytes(s_ownershipUris[ownerOf(tokenId)]).length != 0, ByteTheCookiesNFTCollection__NoNFTUriForAddress());
@@ -69,32 +71,51 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
         return imageURI;
     }
 
+    /// @notice Add an address to the whitelist
+    /// @dev Add an address to the whitelist so it can mint NFTs. onlyOwner modifier is used to restrict access to the function to the owner
+    /// @param user The address to be added to the whitelist
     function addToWhitelist(address user) external onlyOwner {
         s_whitelist[user] = true;
     }
 
+    /// @notice Remove an address from the whitelist
+    /// @dev Remove an address from the whitelist so it can't mint NFTs. onlyOwner modifier is used to restrict access to the function to the owner
+    /// @param user The address to be removed from the whitelist
     function removeFromWhitelist(address user) external onlyOwner {
         s_whitelist[user] = false;
     }
 
+    /// @notice Get the URI of the token for a specific address
+    /// @dev Get the URI of the token for a specific address
+    /// @param user The address to get the token URI from
+    /// @return The URI of the token 
     function getTokenUriForAddress(address user) public view returns (string memory) {
         require(s_whitelist[user], ByteTheCookiesNFTCollection__UserIsNotWhitelisted());
         require(bytes(s_ownershipUris[user]).length != 0, ByteTheCookiesNFTCollection__NoNFTUriForAddress());
         return s_ownershipUris[user];
     }
 
+    /// @notice Check if an address is whitelisted
+    /// @dev Check if an address is whitelisted by checking the mapping
+    /// @param user The address to check if it is whitelisted
+    /// @return A boolean value indicating if the address is whitelisted
     function isWhitelisted(address user) public view returns (bool) {
         return s_whitelist[user];
     }   
 
-    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
+    /// @notice Set the URI of the token
+    /// @dev Set the URI of the token providing the tokenId used in the minting process. Event is emitted to notify the change
+    /// @param tokenId The tokenId assosiated with the NFT token
+    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal {
         _tokenURIs[tokenId] = _tokenURI;
         emit MetadataUpdate(tokenId);
     }
 
-    fallback() external payable {
-        emit ByteTheCookiesNFTCollection__Received(msg.sender, msg.value);
+    /// @notice Get the URI of the token
+    /// @dev Get the URI of the token providing the tokenId used in the minting process. Event is emitted to notify the change
+    /// @param tokenId The tokenId assosiated with the NFT token
+    function _getTokenURI(uint256 tokenId) internal view returns (string memory) {
+        return _tokenURIs[tokenId];
+        emit MetadataRetrieved(tokenId);
     }
-
- 
 }
