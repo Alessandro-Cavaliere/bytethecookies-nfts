@@ -117,6 +117,7 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
     /// @dev Set the URI of the token providing the tokenId used in the minting process. Event is emitted to notify the change
     /// @param tokenId The tokenId assosiated with the NFT token
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal {
+        require(ownerOf(tokenId) == msg.sender, "ByteTheCookiesNFTCollection__Unauthorized");
         _tokenURIs[tokenId] = _tokenURI;
         emit MetadataUpdate(tokenId);
     }
