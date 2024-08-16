@@ -30,6 +30,7 @@ contract NFTTest is Test {
     event Received(address indexed sender, uint256 value);
     event MetadataUpdate(uint256 indexed tokenId);
     event MetadataRetrieved(uint256 indexed tokenId);
+    event CreatedNFT(uint256 indexed tokenId);
     
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
@@ -42,6 +43,7 @@ contract NFTTest is Test {
     /*//////////////////////////////////////////////////////////////
                                  MODIFIERS
     //////////////////////////////////////////////////////////////*/
+
     modifier MintWithLoadAddressAndWhiteListed() {
         ownerShare = MINT_PRICE / 2; // Owner receives 10% of the minting amount
         totalPayment = MINT_PRICE + ownerShare;
@@ -137,12 +139,6 @@ contract NFTTest is Test {
         contractNft.tokenURI(12345); // Non-existent token ID
     }
 
-    function testGetAllTokenUriOfAddressForEveryTokenID() public MintWithLoadAddressAndWhiteListed {
-        string memory allTokenUris = contractNft.getAllTokenUriOfAddressForEveryTokenID(user);
-        console.log("All token URIs: ", allTokenUris);
-        string memory expectedUris = exampleImageUri; // Adjust as necessary
-        assertEq(allTokenUris, expectedUris, "All token URIs should be correctly concatenated");
-    }
 
     function testIsWhitelisted() public {
         vm.prank(owner);
@@ -165,29 +161,45 @@ contract NFTTest is Test {
         assertFalse(isWhitelisted, "Address should not be whitelisted");
     }
     
-    function testIfContractNameIsEqualToExpectedAnvil() public {
+    function testIfContractNameIsEqualToExpectedAnvil() public view{
         string memory expectedName = "ByteTheCookiesNFTCollection__AnvilLocalChain";
         assertEq(contractName, expectedName, "Contract name should be equal to expected name");
     }
 
-    // function testIfContractNameIsEqualToExpectedSepolia() public {
-    //     string memory expectedName = "ByteTheCookiesNFTCollection__Sepolia";
-    //     assertEq(contractName, expectedName, "Contract name should be equal to expected name");
-    // }
+    function testIfContractNameIsEqualToExpectedSepolia() public view{
+        string memory expectedName = "ByteTheCookiesNFTCollection__Sepolia";
+        assertEq(contractName, expectedName, "Contract name should be equal to expected name");
+    }
 
-    // Activate the test if you are using Sepolia
-    //
-    // function testIfOwnerIsEqualToExpectedSepolia() public {
-    //     address expectedOwner = 0xCEA0C88efD9b1508275bf59aC5a9f0923013aB53;
-    //     assertEq(owner, expectedOwner, "Owner should be equal to expected owner");
-    // }
+    function testIfOwnerIsEqualToExpectedSepolia() public view{
+        address expectedOwner = 0xCEA0C88efD9b1508275bf59aC5a9f0923013aB53;
+        assertEq(owner, expectedOwner, "Owner should be equal to expected owner");
+    }
 
-    function testIfOwnerIsEqualToExpectedAnvil() public {
+    function testIfOwnerIsEqualToExpectedAnvil() public view{
         address expectedOwner = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
         assertEq(owner, expectedOwner, "Owner should be equal to expected owner");
     }
 
+    function testMintNftEmitsEvent() public MintWithLoadAddressAndWhiteListed{
+        ownerShare = MINT_PRICE / 2; // Owner receives 10% of the minting amount
+        totalPayment = MINT_PRICE + ownerShare;
+        vm.startPrank(owner);
+        initialOwnerBalance = contractNft.owner().balance;
+        contractNft.addToWhitelist(user);
+        vm.stopPrank();
+        vm.startPrank(user);
+        vm.deal(user, MINT_PRICE);
+        vm.expectEmit(true, true, true, true);
+        emit CreatedNFT(1001);
+        contractNft.mintNft{value: MINT_PRICE}(exampleImageUri);
+    }
+
+
     fallback() external payable {
+        emit Received(msg.sender, msg.value);
+    }
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 }

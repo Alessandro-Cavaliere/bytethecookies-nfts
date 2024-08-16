@@ -31,9 +31,6 @@ contract RetrieveTokenUri is Script {
         ByteTheCookiesNFTCollection(payable(mostRecentlyDeployedNFTContract));
     }
 
-    function getAllTokenUri(address ByteTheCookiesNFTAddress) public view returns (string memory) {
-        return ByteTheCookiesNFTCollection(ByteTheCookiesNFTAddress).getAllTokenUriOfAddressForEveryTokenID(player);
-    }
 }
 
 contract BalanceOfOwner is Script {

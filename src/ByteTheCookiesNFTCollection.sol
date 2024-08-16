@@ -6,7 +6,7 @@ import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 import {console} from "forge-std/Test.sol";
-contract ByteTheCookiesNFTCollection is ERC721,Ownable{
+contract ByteTheCookiesNFTCollection is ERC721URIStorage,Ownable{
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
@@ -23,9 +23,7 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
     event CreatedNFT(uint256 indexed tokenId);
-    event MetadataUpdate(uint256 indexed tokenId);
     event MetadataRetrieved(uint256 indexed tokenId);
-    event ByteTheCookiesNFTCollection__Received(address indexed sender, uint256 value);
 
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
@@ -57,7 +55,7 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
     /// @notice Mint a new NFT
     /// @dev Mint a new NFT though the minting process and is only available to whitelisted addresses
     /// @param tokenUri The URI of the token - the json data containing the metadata
-     function mintNft(string memory tokenUri) public payable{
+    function mintNft(string memory tokenUri) public payable{
         require(s_whitelist[msg.sender], ByteTheCookiesNFTCollection__UserIsNotWhitelisted());
         require(msg.value >= MINT_PRICE, ByteTheCookiesNFTCollection__InvalidPayment());
         uint256 tokenCounter = s_tokenCounter;
@@ -116,7 +114,7 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
     /// @notice Set the URI of the token
     /// @dev Set the URI of the token providing the tokenId used in the minting process. Event is emitted to notify the change
     /// @param tokenId The tokenId assosiated with the NFT token
-    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal {
+    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual override{
         require(ownerOf(tokenId) == msg.sender, "ByteTheCookiesNFTCollection__Unauthorized");
         _tokenURIs[tokenId] = _tokenURI;
         emit MetadataUpdate(tokenId);
@@ -127,16 +125,5 @@ contract ByteTheCookiesNFTCollection is ERC721,Ownable{
     /// @param tokenId The tokenId assosiated with the NFT token
     function _getTokenURI(uint256 tokenId) internal view returns (string memory) {
         return _tokenURIs[tokenId];
-    }
-
-    function getAllTokenUriOfAddressForEveryTokenID(address user) public view returns (string memory) {
-        require(s_whitelist[user], ByteTheCookiesNFTCollection__UserIsNotWhitelisted());
-        string memory allTokenUri;
-        for (uint256 i = 1000; i < s_tokenCounter; i++) {
-            if (ownerOf(i) == user) {
-                allTokenUri = string(abi.encodePacked(allTokenUri, _getTokenURI(i)));
-            }
-        }
-        return allTokenUri;
     }
 }
