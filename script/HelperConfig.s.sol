@@ -50,7 +50,7 @@ contract HelperConfig is CodeConstants, Script {
 
     /// @notice Set the network configuration
     /// @dev Set the network configuration using the mapping networkConfigs
-    /// @param chainId The chain id 
+    /// @param chainId The chain id
     /// @param networkConfig The network configuration with type NetworkConfig
     function setConfig(uint256 chainId, NetworkConfig memory networkConfig) public {
         networkConfigs[chainId] = networkConfig;
@@ -61,13 +61,11 @@ contract HelperConfig is CodeConstants, Script {
     /// @param chainId The chain id
     /// @return NetworkConfig - The network configuration
     function getConfigByChainId(uint256 chainId) public returns (NetworkConfig memory) {
-        if(chainId == ETH_MAINNET_CHAIN_ID) {
+        if (chainId == ETH_MAINNET_CHAIN_ID) {
             return getMainnetEthConfig();
-        }
-        else if (chainId == ETH_SEPOLIA_CHAIN_ID) {
+        } else if (chainId == ETH_SEPOLIA_CHAIN_ID) {
             return getSepoliaEthConfig();
-        }
-        else if (chainId == LOCAL_CHAIN_ID) {
+        } else if (chainId == LOCAL_CHAIN_ID) {
             return getOrCreateAnvilEthConfig();
         } else {
             revert HelperConfig__InvalidChainId();
@@ -79,7 +77,7 @@ contract HelperConfig is CodeConstants, Script {
     /// @return mainnetNetworkConfig - The mainnet network configuration
     function getMainnetEthConfig() public view returns (NetworkConfig memory mainnetNetworkConfig) {
         mainnetNetworkConfig = NetworkConfig({
-            name: "ByteTheCookiesNFTCollection__Mainnet", 
+            name: "ByteTheCookiesNFTCollection__Mainnet",
             symbol: "BTC",
             owner: 0xCEA0C88efD9b1508275bf59aC5a9f0923013aB53
         });
@@ -90,7 +88,7 @@ contract HelperConfig is CodeConstants, Script {
     /// @return sepoliaNetworkConfig - The Sepolia network configuration
     function getSepoliaEthConfig() public view returns (NetworkConfig memory sepoliaNetworkConfig) {
         sepoliaNetworkConfig = NetworkConfig({
-            name: "ByteTheCookiesNFTCollection__SepoliaTestnet", 
+            name: "ByteTheCookiesNFTCollection__SepoliaTestnet",
             symbol: "BTC",
             owner: 0xCEA0C88efD9b1508275bf59aC5a9f0923013aB53
         });
@@ -101,7 +99,7 @@ contract HelperConfig is CodeConstants, Script {
     /// @return mainnetNetworkConfig - The Anvil network configuration
     function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
         localNetworkConfig = NetworkConfig({
-            name: "ByteTheCookiesNFTCollection__AnvilLocalChain", 
+            name: "ByteTheCookiesNFTCollection__AnvilLocalChain",
             symbol: "BTC",
             owner: FOUNDRY_DEFAULT_SENDER
         });

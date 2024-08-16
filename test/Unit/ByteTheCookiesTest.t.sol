@@ -31,7 +31,7 @@ contract NFTTest is Test {
     event MetadataUpdate(uint256 indexed tokenId);
     event MetadataRetrieved(uint256 indexed tokenId);
     event CreatedNFT(uint256 indexed tokenId);
-    
+
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
     //////////////////////////////////////////////////////////////*/
@@ -78,7 +78,7 @@ contract NFTTest is Test {
         vm.stopPrank();
         contractName = config.name;
         contractSymbol = config.symbol;
-        user= makeAddr("user");
+        user = makeAddr("user");
         console.log("owner: ", owner);
         console.log("Setup complete");
     }
@@ -100,27 +100,31 @@ contract NFTTest is Test {
         assertTrue(isOwnerWhitelisted, "Contract owner should be whitelisted by default");
     }
 
-    function testIfMintPaymentIsCorrect() public MintWithLoadAddressAndWhiteListed{
+    function testIfMintPaymentIsCorrect() public MintWithLoadAddressAndWhiteListed {
         uint256 actualOwnerBalance = contractNft.owner().balance;
-        assertEq(actualOwnerBalance, initialOwnerBalance + ownerShare, "Owner balance should be increased x 2 of the minting amount");
+        assertEq(
+            actualOwnerBalance,
+            initialOwnerBalance + ownerShare,
+            "Owner balance should be increased x 2 of the minting amount"
+        );
     }
 
-    function testMintNftWithNotWhitelisteduser() public MintWithLoadAddressAndNotWhiteListed{
+    function testMintNftWithNotWhitelisteduser() public MintWithLoadAddressAndNotWhiteListed {
         vm.expectRevert(ByteTheCookiesNFTCollection__UserIsNotWhitelisted.selector);
     }
 
-    function testTokenURIFunction() public MintWithLoadAddressAndWhiteListed{
+    function testTokenURIFunction() public MintWithLoadAddressAndWhiteListed {
         uint256 tokenId = 1000; // Token ID should match the minted one
         string memory tokenUri = contractNft.tokenURI(tokenId);
         assertEq(tokenUri, exampleImageUri, "Token URI should be correctly set");
     }
 
-    function testGetTokenUriForAddressWhitelistedWithAtLeastAToken() public MintWithLoadAddressAndWhiteListed{
-        string memory expectedImageUri= contractNft.getTokenUriForAddress(user);
+    function testGetTokenUriForAddressWhitelistedWithAtLeastAToken() public MintWithLoadAddressAndWhiteListed {
+        string memory expectedImageUri = contractNft.getTokenUriForAddress(user);
         assertEq(expectedImageUri, exampleImageUri, "Token URI for address should match the expected URI");
     }
 
-    function testGetTokenUriForAddressWhitelistedButWithoutTokens() public{
+    function testGetTokenUriForAddressWhitelistedButWithoutTokens() public {
         vm.startPrank(owner);
         contractNft.addToWhitelist(user);
         vm.startPrank(user);
@@ -128,7 +132,7 @@ contract NFTTest is Test {
         contractNft.getTokenUriForAddress(user);
     }
 
-    function testGetTokenUriForAddressNotWhitelisted() public{
+    function testGetTokenUriForAddressNotWhitelisted() public {
         vm.expectRevert(ByteTheCookiesNFTCollection__UserIsNotWhitelisted.selector);
         contractNft.getTokenUriForAddress(user);
     }
@@ -138,7 +142,6 @@ contract NFTTest is Test {
         vm.expectRevert();
         contractNft.tokenURI(12345); // Non-existent token ID
     }
-
 
     function testIsWhitelisted() public {
         vm.prank(owner);
@@ -160,28 +163,28 @@ contract NFTTest is Test {
         bool isWhitelisted = contractNft.isWhitelisted(user);
         assertFalse(isWhitelisted, "Address should not be whitelisted");
     }
-    
-    function testIfContractNameIsEqualToExpectedAnvil() public view{
+
+    function testIfContractNameIsEqualToExpectedAnvil() public view {
         string memory expectedName = "ByteTheCookiesNFTCollection__AnvilLocalChain";
         assertEq(contractName, expectedName, "Contract name should be equal to expected name");
     }
 
-    function testIfContractNameIsEqualToExpectedSepolia() public view{
+    function testIfContractNameIsEqualToExpectedSepolia() public view {
         string memory expectedName = "ByteTheCookiesNFTCollection__Sepolia";
         assertEq(contractName, expectedName, "Contract name should be equal to expected name");
     }
 
-    function testIfOwnerIsEqualToExpectedSepolia() public view{
+    function testIfOwnerIsEqualToExpectedSepolia() public view {
         address expectedOwner = 0xCEA0C88efD9b1508275bf59aC5a9f0923013aB53;
         assertEq(owner, expectedOwner, "Owner should be equal to expected owner");
     }
 
-    function testIfOwnerIsEqualToExpectedAnvil() public view{
+    function testIfOwnerIsEqualToExpectedAnvil() public view {
         address expectedOwner = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
         assertEq(owner, expectedOwner, "Owner should be equal to expected owner");
     }
 
-    function testMintNftEmitsEvent() public MintWithLoadAddressAndWhiteListed{
+    function testMintNftEmitsEvent() public MintWithLoadAddressAndWhiteListed {
         ownerShare = MINT_PRICE / 2; // Owner receives 10% of the minting amount
         totalPayment = MINT_PRICE + ownerShare;
         vm.startPrank(owner);
@@ -195,10 +198,10 @@ contract NFTTest is Test {
         contractNft.mintNft{value: MINT_PRICE}(exampleImageUri);
     }
 
-
     fallback() external payable {
         emit Received(msg.sender, msg.value);
     }
+
     receive() external payable {
         emit Received(msg.sender, msg.value);
     }

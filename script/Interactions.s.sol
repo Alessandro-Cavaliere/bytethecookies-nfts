@@ -10,8 +10,10 @@ contract MintByteTheCookiesNFT is Script {
     string public exampleImageUri = "exampleUri";
     address public player = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266; // Base Account of Local Chain Anvil
     uint256 public constant MINT_PRICE = 0.001 ether;
+
     function run() external view {
-        address mostRecentlyDeployedNFTContract = DevOpsTools.get_most_recent_deployment("ByteTheCookiesNFTCollection", block.chainid);
+        address mostRecentlyDeployedNFTContract =
+            DevOpsTools.get_most_recent_deployment("ByteTheCookiesNFTCollection", block.chainid);
         ByteTheCookiesNFTCollection(payable(mostRecentlyDeployedNFTContract));
     }
 
@@ -26,17 +28,20 @@ contract MintByteTheCookiesNFT is Script {
 
 contract RetrieveTokenUri is Script {
     address public player = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266; // Base Account of Local Chain Anvil
+
     function run() external {
-        address mostRecentlyDeployedNFTContract = DevOpsTools.get_most_recent_deployment("ByteTheCookiesNFTCollection", block.chainid);
+        address mostRecentlyDeployedNFTContract =
+            DevOpsTools.get_most_recent_deployment("ByteTheCookiesNFTCollection", block.chainid);
         ByteTheCookiesNFTCollection(payable(mostRecentlyDeployedNFTContract));
     }
-
 }
 
 contract BalanceOfOwner is Script {
     address public player = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266; // Base Account of Local Chain Anvil
+
     function run() external {
-        address mostRecentlyDeployedNFTContract = DevOpsTools.get_most_recent_deployment("ByteTheCookiesNFTCollection", block.chainid);
+        address mostRecentlyDeployedNFTContract =
+            DevOpsTools.get_most_recent_deployment("ByteTheCookiesNFTCollection", block.chainid);
         ByteTheCookiesNFTCollection(payable(mostRecentlyDeployedNFTContract));
     }
 
