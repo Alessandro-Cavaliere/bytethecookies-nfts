@@ -35,17 +35,18 @@ ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
 	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --account $(ACCOUNT) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 endif
 
+ifeq ($(findstring --network holesky,$(ARGS)),--network holesky)
+	NETWORK_ARGS := --rpc-url $(HOLESKY_RPC_URL) --account $(ACCOUNT) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+endif
+
 deploy:
 	@forge script ./script/DeployByteTheCookiesNFT.s.sol:DeployByteTheCookiesNFT $(NETWORK_ARGS)
 
 mint:
-	@forge script script/Interactions.s.sol:MintByteTheCookiesNFT ${NETWORK_ARGS}
+	@forge script ./script/Interactions.s.sol:MintByteTheCookiesNFT ${NETWORK_ARGS}
 
-allTokenUri:
-	@forge script script/Interactions.s.sol:RetrieveTokenUri ${NETWORK_ARGS} 
-
-balance:
-	@forge script script/Interactions.s.sol:BalanceOfOwner ${NETWORK_ARGS} 
+whitelist:
+	@forge script ./script/Interactions.s.sol:SettingWhitelist ${NETWORK_ARGS}
 
 zkdeploy: 
-	@forge create src/OurToken.sol:OurToken --rpc-url http://127.0.0.1:8011 --private-key $(DEFAULT_ZKSYNC_LOCAL_KEY) --legacy --zksync
+	@forge create ./src/example.sol:example --rpc-url http://127.0.0.1:8011 --private-key $(DEFAULT_ZKSYNC_LOCAL_KEY) --legacy --zksync
