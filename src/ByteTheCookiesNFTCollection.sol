@@ -8,6 +8,7 @@ import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 import {console} from "forge-std/Test.sol";
 
 contract ByteTheCookiesNFTCollection is ERC721URIStorage, Ownable {
+
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
@@ -16,9 +17,10 @@ contract ByteTheCookiesNFTCollection is ERC721URIStorage, Ownable {
     address private s_owner;
     uint256 private s_tokenCounter;
     mapping(address => bool) private s_whitelist;
-    mapping(address => string) private s_ownershipUris;
+    mapping(address => string[]) private s_ownershipUris;   
     mapping(uint256 tokenId => string) private _tokenURIs;
-    uint256 public constant MINT_PRICE = 0.001 ether;
+    string public constant VERSION = "ByteTheCookiesNFTCollection_v1.0.3";
+    uint256 public constant MINT_PRICE = 0.01 ether;
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -60,7 +62,7 @@ contract ByteTheCookiesNFTCollection is ERC721URIStorage, Ownable {
         _setTokenURI(tokenCounter, tokenUri);
         uint256 ownerShare = msg.value / 2;
         payable(owner()).transfer(ownerShare);
-        s_ownershipUris[msg.sender] = tokenUri;
+        s_ownershipUris[msg.sender].push(tokenUri);
         s_tokenCounter = s_tokenCounter + 1;
         emit CreatedNFT(tokenCounter);
     }
@@ -71,8 +73,8 @@ contract ByteTheCookiesNFTCollection is ERC721URIStorage, Ownable {
     /// @return The URI of the token
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(ownerOf(tokenId) != address(0), OZ_ERC721__NoExistentToken());
-        require(bytes(s_ownershipUris[ownerOf(tokenId)]).length != 0, ByteTheCookiesNFTCollection__NoNFTUriForAddress());
-        string memory imageURI = s_ownershipUris[ownerOf(tokenId)];
+        require(bytes(_tokenURIs[tokenId]).length != 0, ByteTheCookiesNFTCollection__NoNFTUriForAddress());
+        string memory imageURI = _tokenURIs[tokenId];
         return imageURI;
     }
 
@@ -89,14 +91,13 @@ contract ByteTheCookiesNFTCollection is ERC721URIStorage, Ownable {
     function removeFromWhitelist(address user) external onlyOwner {
         s_whitelist[user] = false;
     }
-
-    /// @notice Get the URI of the token for a specific address
-    /// @dev Get the URI of the token for a specific address
-    /// @param user The address to get the token URI from
-    /// @return The URI of the token
-    function getTokenUriForAddress(address user) public view returns (string memory) {
+    
+    /// @notice Get all token URIs for a specific address
+    /// @dev Get the list of token URIs associated with the given address
+    /// @param user The address to get the token URIs from
+    /// @return An array of token URIs
+    function getTokenUrisForAddress(address user) public view returns (string[] memory) {
         require(s_whitelist[user], ByteTheCookiesNFTCollection__UserIsNotWhitelisted());
-        require(bytes(s_ownershipUris[user]).length != 0, ByteTheCookiesNFTCollection__NoNFTUriForAddress());
         return s_ownershipUris[user];
     }
 

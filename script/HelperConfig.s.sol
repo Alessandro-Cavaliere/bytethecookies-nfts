@@ -6,8 +6,10 @@ import {Script, console2} from "forge-std/Script.sol";
 abstract contract CodeConstants {
     address public FOUNDRY_DEFAULT_SENDER = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
     uint256 public constant ETH_SEPOLIA_CHAIN_ID = 11155111;
+    uint256 public constant ETH_HOLESKY_CHAIN_ID = 17000;
     uint256 public constant ETH_MAINNET_CHAIN_ID = 1;
     uint256 public constant LOCAL_CHAIN_ID = 31337;
+    
 }
 
 contract HelperConfig is CodeConstants, Script {
@@ -36,6 +38,7 @@ contract HelperConfig is CodeConstants, Script {
                                FUNCTIONS
     //////////////////////////////////////////////////////////////*/
     constructor() {
+        networkConfigs[ETH_HOLESKY_CHAIN_ID] = getHoleskyEthConfig();
         networkConfigs[ETH_SEPOLIA_CHAIN_ID] = getSepoliaEthConfig();
         networkConfigs[ETH_MAINNET_CHAIN_ID] = getMainnetEthConfig();
         // Note: We skip doing the local config
@@ -65,9 +68,13 @@ contract HelperConfig is CodeConstants, Script {
             return getMainnetEthConfig();
         } else if (chainId == ETH_SEPOLIA_CHAIN_ID) {
             return getSepoliaEthConfig();
-        } else if (chainId == LOCAL_CHAIN_ID) {
+        } else if(chainId == ETH_HOLESKY_CHAIN_ID){
+            return getHoleskyEthConfig();
+        }
+        else if (chainId == LOCAL_CHAIN_ID) {
             return getOrCreateAnvilEthConfig();
-        } else {
+        }
+        else {
             revert HelperConfig__InvalidChainId();
         }
     }
@@ -89,6 +96,17 @@ contract HelperConfig is CodeConstants, Script {
     function getSepoliaEthConfig() public view returns (NetworkConfig memory sepoliaNetworkConfig) {
         sepoliaNetworkConfig = NetworkConfig({
             name: "ByteTheCookiesNFTCollection__SepoliaTestnet",
+            symbol: "BTC",
+            owner: 0xCEA0C88efD9b1508275bf59aC5a9f0923013aB53
+        });
+    }
+
+    /// @notice Get the Holesky network configuration
+    /// @dev Get the Holesky network configuration using the getHoleskyEthConfig() function
+    /// @return holeskyNetworkConfig - The Holesky network configuration
+    function getHoleskyEthConfig() public view returns (NetworkConfig memory holeskyNetworkConfig) {
+        holeskyNetworkConfig = NetworkConfig({
+            name: "ByteTheCookiesNFTCollection__HoleskyTestnet",
             symbol: "BTC",
             owner: 0xCEA0C88efD9b1508275bf59aC5a9f0923013aB53
         });
