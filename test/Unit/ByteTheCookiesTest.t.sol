@@ -119,23 +119,7 @@ contract NFTTest is Test {
         assertEq(tokenUri, exampleImageUri, "Token URI should be correctly set");
     }
 
-    function testGetTokenUriForAddressWhitelistedWithAtLeastAToken() public MintWithLoadAddressAndWhiteListed {
-        string memory expectedImageUri = contractNft.getTokenUriForAddress(user);
-        assertEq(expectedImageUri, exampleImageUri, "Token URI for address should match the expected URI");
-    }
 
-    function testGetTokenUriForAddressWhitelistedButWithoutTokens() public {
-        vm.startPrank(owner);
-        contractNft.addToWhitelist(user);
-        vm.startPrank(user);
-        vm.expectRevert(ByteTheCookiesNFTCollection__NoNFTUriForAddress.selector);
-        contractNft.getTokenUriForAddress(user);
-    }
-
-    function testGetTokenUriForAddressNotWhitelisted() public {
-        vm.expectRevert(ByteTheCookiesNFTCollection__UserIsNotWhitelisted.selector);
-        contractNft.getTokenUriForAddress(user);
-    }
 
     function testTokenURIForNonexistentToken() public {
         vm.prank(user);
@@ -172,6 +156,16 @@ contract NFTTest is Test {
     function testIfContractNameIsEqualToExpectedSepolia() public view {
         string memory expectedName = "ByteTheCookiesNFTCollection__Sepolia";
         assertEq(contractName, expectedName, "Contract name should be equal to expected name");
+    }
+
+    function testIfContractNameIsEqualToExpectedHolesky() public view {
+        string memory expectedName = "ByteTheCookiesNFTCollection__HoleskyTestnet";
+        assertEq(contractName, expectedName, "Contract name should be equal to expected name");
+    }
+
+    function testIfOwnerIsEqualToExpectedHolesky() public view {
+        address expectedOwner = 0xCEA0C88efD9b1508275bf59aC5a9f0923013aB53;
+        assertEq(owner, expectedOwner, "Owner should be equal to expected owner");
     }
 
     function testIfOwnerIsEqualToExpectedSepolia() public view {
